@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alert-dispatcher-api-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alert-dispatcher-api
+  template:
+    metadata:
+      labels:
+        app: alert-dispatcher-api
+    spec:
+      containers:
+        - name: alert-dispatcher-api
+          image: alert-dispatcher-api-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8002
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alert-dispatcher-api-service
+spec:
+  selector:
+    app: alert-dispatcher-api
+  ports:
+    - protocol: TCP
+      port: 8002
+      targetPort: 8002
+  type: NodePort
