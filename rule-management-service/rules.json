@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "metricName": "cpu_usage",
+    "condition": "\u003e",
+    "threshold": 80,
+    "alertMessage": "CPU usage exceeds 80%"
+  },
+  {
+    "id": 2,
+    "metricName": "memory_usage",
+    "condition": "\u003e",
+    "threshold": 75,
+    "alertMessage": "Memory usage exceeds 75%"
+  },
+  {
+    "id": 3,
+    "metricName": "disk_space",
+    "condition": "\u003c",
+    "threshold": 20,
+    "alertMessage": "Disk space is below 20%"
+  },
+  {
+    "id": 4,
+    "metricName": "mouse_battery",
+    "condition": "\u003c",
+    "threshold": 30,
+    "alertMessage": "Mouse battery level is under 30%"
+  }
+]

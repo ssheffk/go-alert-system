@@ -8,14 +8,13 @@ WORKDIR /app
 COPY . .
 
 # Download dependencies
-RUN go mod init metrics-api
 RUN go mod tidy
 
 # Build the Go application
-RUN go build -o metrics-api
+RUN go build -o metrics-api-service
 
 # Expose the port
 EXPOSE 8001
 
 # Run the application
-CMD ["./metrics-api"]
+CMD ["./metrics-api-service"]

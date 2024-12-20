@@ -1,5 +1,5 @@
 # Use the official Golang image
-FROM golang:1.21
+FROM golang:1.23
 
 # Set the working directory
 WORKDIR /app
@@ -8,14 +8,13 @@ WORKDIR /app
 COPY . .
 
 # Download dependencies
-RUN go mod init rule-management-api
 RUN go mod tidy
 
 # Build the Go application
-RUN go build -o rule-management-api
+RUN go build -o rule-management-service
 
 # Expose the port
 EXPOSE 8004
 
 # Run the application
-CMD ["./rule-management-api"]
+CMD ["./rule-management-service"]

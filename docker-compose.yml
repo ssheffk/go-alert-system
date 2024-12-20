@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  metrics-api-service:
+    build:
+      context: ./metrics-api-service
+      dockerfile: Dockerfile
+    container_name: metrics-api-service
+    ports:
+      - "8001:8001"
+    networks:
+      - go-network
+    environment:
+      - SERVICE_NAME=metrics-api-service
+      - KAFKA_BROKER=kafka:9092
+    restart: always
+    depends_on:
+      - kafka
+    
+
+  alert-dispatcher-service:
+    build:
+      context: ./alert-dispatcher-service
+      dockerfile: Dockerfile
+    container_name: alert-dispatcher-service
+    ports:
+      - "8002:8002"
+    networks:
+      - go-network
+    environment:
+      - SERVICE_NAME=alert-dispatcher-service
+    restart: always
+  
+  rule-engine-service:
+    build:
+      context: ./rule-engine-service
+      dockerfile: Dockerfile
+    container_name: rule-engine-service
+    ports:
+      - "8003:8003"
+    networks:
+      - go-network
+    environment:
+      - SERVICE_NAME=rule-engine-service
+      - KAFKA_BROKER=kafka:9092
+    restart: always
+    depends_on:
+      - kafka
+    
+  rule-management-service:
+    build:
+      context: ./rule-management-service
+      dockerfile: Dockerfile
+    container_name: rule-management-service
+    ports:
+      - "8004:8004"
+    networks:
+      - go-network
+    environment:
+      - SERVICE_NAME=rule-management-service
+    restart: always
+    
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092  # Use the service name
+      KAFKA_LISTENER_SECURITY_PROTOCOL: PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_LISTENER_NAME_INSIDE_SECURITY_PROTOCOL: PLAINTEXT  # Security protocol for INSIDE listener
+      KAFKA_LISTENER_PORT: 9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - go-network
+
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9092"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - go-network
+
+networks:
+  go-network:
+    driver: bridge
