@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: metrics-api-service
+  name: go-alert-system-metrics-api-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: metrics-api
+      app: metrics-api-service
   template:
     metadata:
       labels:
-        app: metrics-api
+        app: metrics-api-service
     spec:
       containers:
-        - name: metrics-api
-          image: metrics-api-service:latest
+        - name: metrics-api-service
+          image: go-alert-system-metrics-api-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8001
@@ -23,10 +23,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: metrics-api-service
+  name: go-alert-system-metrics-api-service
 spec:
   selector:
-    app: metrics-api
+    app: metrics-api-service
   ports:
     - protocol: TCP
       port: 8001

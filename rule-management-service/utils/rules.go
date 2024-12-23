@@ -7,14 +7,13 @@ import (
 )
 
 type Rule struct {
-	ID           int     `json:"id"`
-	MetricName   string  `json:"metricName" binding:"required"`
-	Condition    string  `json:"condition" binding:"required"`
-	Threshold    float64 `json:"threshold" binding:"required"`
-	AlertMessage string  `json:"alertMessage" binding:"required"`
+	ID         int     `json:"id"`
+	MetricName string  `json:"metricName" binding:"required"`
+	Operator   string  `json:"operator" binding:"required"`
+	Threshold  float64 `json:"threshold" binding:"required"`
 }
 
-var NextRuleID = 4 // Track the next available rule ID
+var NextRuleID = 5 // Track the next available rule ID
 
 // ReadRulesFromJSON reads the rules from the JSON file.
 func ReadRulesFromJSON(filename string) ([]Rule, error) {

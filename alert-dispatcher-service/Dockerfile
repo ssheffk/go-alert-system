@@ -8,14 +8,13 @@ WORKDIR /app
 COPY . .
 
 # Download dependencies
-RUN go mod init alert-dispatcher-api
 RUN go mod tidy
 
 # Build the Go application
-RUN go build -o alert-dispatcher-api
+RUN go build -o alert-dispatcher-service
 
 # Expose the port
 EXPOSE 8002
 
 # Run the application
-CMD ["./alert-dispatcher-api"]
+CMD ["./alert-dispatcher-service"]

@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rule-management-api-service
+  name: go-alert-system-rule-management-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rule-management-api
+      app: rule-management-service
   template:
     metadata:
       labels:
-        app: rule-management-api
+        app: rule-management-service
     spec:
       containers:
-        - name: rule-management-api
-          image: rule-management-api-service:latest
+        - name: rule-management-service
+          image: go-alert-system-rule-management-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8004
@@ -23,12 +23,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rule-management-api-service
+  name: go-alert-system-rule-management-service
 spec:
   selector:
-    app: rule-management-api
+    app: rule-management-service
   ports:
     - protocol: TCP
       port: 8004
       targetPort: 8004
-  type: NodePort
+  type: ClusterIP

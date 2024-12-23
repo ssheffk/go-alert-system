@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: alert-dispatcher-api-service
+  name: go-alert-system-alert-dispatcher-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: alert-dispatcher-api
+      app: alert-dispatcher-service
   template:
     metadata:
       labels:
-        app: alert-dispatcher-api
+        app: alert-dispatcher-service
     spec:
       containers:
-        - name: alert-dispatcher-api
-          image: alert-dispatcher-api-service:latest
+        - name: alert-dispatcher-service
+          image: go-alert-system-alert-dispatcher-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8002
@@ -23,10 +23,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: alert-dispatcher-api-service
+  name: go-alert-system-alert-dispatcher-service
 spec:
   selector:
-    app: alert-dispatcher-api
+    app: alert-dispatcher-service
   ports:
     - protocol: TCP
       port: 8002

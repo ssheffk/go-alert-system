@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -28,11 +29,6 @@ type Alert struct {
 	Value      float64   `json:"value"`
 	Timestamp  time.Time `json:"timestamp"`
 	Message    string    `json:"message"`
-}
-
-var rules = []Rule{
-	{MetricName: "cpu_usage", Threshold: 80.0, Operator: ">"},
-	{MetricName: "memory_usage", Threshold: 70.0, Operator: ">"},
 }
 
 func main() {
@@ -62,10 +58,6 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "Rule engine service is running"})
 	})
 
-	r.GET("/api/rules", func(c *gin.Context) {
-		c.JSON(http.StatusOK, rules)
-	})
-
 	r.Run(":8003")
 }
 
@@ -80,6 +72,13 @@ func consumeMetrics(consumer sarama.Consumer, producer sarama.SyncProducer) {
 		var metric MetricPayload
 		if err := json.Unmarshal(message.Value, &metric); err != nil {
 			log.Printf("Error unmarshalling message: %v", err)
+			continue
+		}
+
+		// Fetch rules from the rule-management-service
+		rules, err := fetchRules()
+		if err != nil {
+			log.Printf("Error fetching rules: %v", err)
 			continue
 		}
 
@@ -136,4 +135,36 @@ func sendAlert(producer sarama.SyncProducer, alert Alert) {
 	if err != nil {
 		log.Printf("Error sending alert: %v", err)
 	}
+}
+
+func fetchRules() ([]Rule, error) {
+
+	// ruleServiceURL := "http://go-alert-system-rule-management-service.default.svc.cluster.local:8004/api/rules"
+
+	// Define the URL of the rule-management-service
+	ruleServiceURL := "http://rule-management-service:8004/api/rules"
+
+	// Make the HTTP GET request
+	resp, err := http.Get(ruleServiceURL)
+	if err != nil {
+		return nil, fmt.Errorf("error fetching rules: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("received non-OK status code: %d", resp.StatusCode)
+	}
+
+	// Parse the response body
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %w", err)
+	}
+
+	var rules []Rule
+	if err := json.Unmarshal(body, &rules); err != nil {
+		return nil, fmt.Errorf("error unmarshalling rules: %w", err)
+	}
+
+	return rules, nil
 }

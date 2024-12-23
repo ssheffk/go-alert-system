@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rule-engine-api-service
+  name: go-alert-system-rule-engine-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rule-engine-api
+      app: rule-engine-service
   template:
     metadata:
       labels:
-        app: rule-engine-api
+        app: rule-engine-service
     spec:
       containers:
-        - name: rule-engine-api
-          image: rule-engine-api-service:latest
+        - name: rule-engine-service
+          image: go-alert-system-rule-engine-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8003
@@ -23,10 +23,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rule-engine-api-service
+  name: go-alert-system-rule-engine-service
 spec:
   selector:
-    app: rule-engine-api
+    app: rule-engine-service
   ports:
     - protocol: TCP
       port: 8003
